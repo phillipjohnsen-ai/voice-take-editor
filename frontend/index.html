@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voice Take Editor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <h1>Voice Take Editor</h1>
+    <div id="header-right">
+      <span id="session-label"></span>
+      <button id="btn-new-session" class="ghost">+ New Session</button>
+    </div>
+  </header>
+
+  <!-- Upload -->
+  <section id="upload-section">
+    <div id="drop-zone">
+      <div class="drop-icon">🎙</div>
+      <p>Drop audio files here or <label for="file-input">browse</label></p>
+      <input type="file" id="file-input" multiple accept="audio/*" hidden />
+      <p class="hint">m4a · mp3 · wav · aiff</p>
+    </div>
+    <div id="upload-actions" style="display:none">
+      <button id="btn-transcribe-all">Transcribe All with Whisper</button>
+      <button id="btn-remove-silence-all" class="secondary">Remove Silence from All</button>
+    </div>
+  </section>
+
+  <!-- Takes -->
+  <section id="takes-section" style="display:none">
+    <div class="section-header">
+      <h2>Takes</h2>
+      <div style="display:flex;gap:10px;align-items:center">
+        <label class="toggle-label">
+          <input type="checkbox" id="show-processed" />
+          Use silence-removed audio
+        </label>
+        <button id="btn-group-rank" class="accent-outline" disabled>✦ Group &amp; Rank Sentences</button>
+      </div>
+    </div>
+    <div id="takes-grid"></div>
+  </section>
+
+  <!-- Sentence Groups (ranked candidates — you pick) -->
+  <section id="groups-section" style="display:none">
+    <div class="section-header">
+      <h2>Sentence Groups</h2>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span id="groups-stats" class="hint"></span>
+        <button id="btn-add-all" class="accent-outline" style="display:none" onclick="addAllToAssembly()">+ Add All to Assembly</button>
+        <button id="btn-regroup" class="ghost">↺ Re-run</button>
+      </div>
+    </div>
+    <p class="hint" style="margin-bottom:16px">
+      Candidates are ranked by quality score. Click <strong>▶</strong> to listen, then <strong>+ Add</strong> to put it in your assembly.
+    </p>
+    <div id="groups-loading" style="display:none">
+      <span class="spinner"></span> Grouping and scoring sentences…
+    </div>
+    <div id="groups-list"></div>
+  </section>
+
+  <!-- Assembly -->
+  <section id="assembly-section" style="display:none">
+    <div class="section-header">
+      <h2>Assembly</h2>
+      <div id="assembly-controls">
+        <button id="btn-clear-assembly" class="ghost danger-ghost">Clear</button>
+        <button id="btn-export" disabled>⬇ Export WAV</button>
+      </div>
+    </div>
+    <p class="hint" style="margin-bottom:14px">
+      Click a word to select it. Shift+click to extend the selection. Backspace or ✂ to delete. Drag ⠿ to reorder.
+    </p>
+    <div id="assembly-list">
+      <div class="assembly-empty">No sentences added yet — pick candidates above.</div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Floating word-selection toolbar (assembly editing mode) -->
+<div id="selection-toolbar" style="display:none">
+  <span id="sel-label"></span>
+  <button id="btn-sel-play" class="tb-btn">▶ Play</button>
+  <button id="btn-sel-delete" class="tb-btn danger">✂ Delete</button>
+  <button id="btn-sel-clear" class="tb-btn ghost">✕</button>
+</div>
+
+<!-- Global audio bar -->
+<div id="global-audio-bar" style="display:none">
+  <span id="now-playing-label"></span>
+  <audio id="global-audio" controls></audio>
+</div>
+
+<div id="status-toast"></div>
+<script src="app.js"></script>
+</body>
+</html>

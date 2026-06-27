@@ -1,0 +1,42 @@
+# ── Audio files — never commit personal recordings ───────────────────────────
+*.m4a
+*.mp3
+*.wav
+*.aiff
+*.aif
+*.aac
+*.flac
+*.ogg
+*.opus
+*.caf
+
+# ── Project upload / export directories ──────────────────────────────────────
+uploads/
+exports/
+
+# ── Session state (contains local file paths) ────────────────────────────────
+state.json
+
+# ── ffmpeg binary ─────────────────────────────────────────────────────────────
+bins/
+
+# ── Python environment ────────────────────────────────────────────────────────
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# ── macOS ─────────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ── Editor ────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
