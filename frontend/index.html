@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Voice Take Editor</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=2" />
 </head>
 <body>
 <div id="app">
@@ -26,22 +26,15 @@
       <p class="hint">m4a · mp3 · wav · aiff</p>
     </div>
     <div id="upload-actions" style="display:none">
-      <button id="btn-transcribe-all">Transcribe All with Whisper</button>
-      <button id="btn-remove-silence-all" class="secondary">Remove Silence from All</button>
+      <button id="btn-process-all" class="accent">▶ Process &amp; Group Everything</button>
     </div>
+    <div id="process-status" style="display:none;margin-top:8px;font-size:13px;color:var(--accent)"></div>
   </section>
 
   <!-- Takes -->
   <section id="takes-section" style="display:none">
     <div class="section-header">
       <h2>Takes</h2>
-      <div style="display:flex;gap:10px;align-items:center">
-        <label class="toggle-label">
-          <input type="checkbox" id="show-processed" />
-          Use silence-removed audio
-        </label>
-        <button id="btn-group-rank" class="accent-outline" disabled>✦ Group &amp; Rank Sentences</button>
-      </div>
     </div>
     <div id="takes-grid"></div>
   </section>
@@ -99,6 +92,6 @@
 </div>
 
 <div id="status-toast"></div>
-<script src="app.js"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>

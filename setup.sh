@@ -24,8 +24,12 @@ if [ "$OS" = "Darwin" ]; then
     unzip -q "$TMP/ffmpeg.zip" -d "$TMP"
     mv "$TMP/ffmpeg" "$BINS/ffmpeg"
     chmod +x "$BINS/ffmpeg"
+    curl -L "https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip" -o "$TMP/ffprobe.zip"
+    unzip -q "$TMP/ffprobe.zip" -d "$TMP"
+    mv "$TMP/ffprobe" "$BINS/ffprobe"
+    chmod +x "$BINS/ffprobe"
     rm -rf "$TMP"
-    echo "✓ ffmpeg installed to bins/ffmpeg"
+    echo "✓ ffmpeg + ffprobe installed to bins/"
   fi
 elif [ "$OS" = "Linux" ]; then
   # Linux — use the system package manager

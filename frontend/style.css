@@ -182,6 +182,25 @@ button.accent-outline:disabled { color: var(--text-dim); border-color: var(--bor
 }
 .group-card:hover .group-drag-handle { opacity: 1; }
 .group-drag-handle:active { cursor: grabbing; }
+.group-rating-btns { display:flex; gap:2px; flex-shrink:0; }
+.grb {
+  background: transparent; border: none;
+  font-size: 16px; line-height: 1; padding: 0 3px;
+  transition: opacity 0.15s, transform 0.1s;
+  opacity: 0.2; cursor: pointer;
+}
+.group-card:hover .grb { opacity: 0.4; }
+.grb:hover { opacity: 0.85 !important; transform: scale(1.2); }
+.grb-good { color: #4caf82; }
+.grb-meh  { color: #e8954a; }
+.grb-bad  { color: #e05555; }
+.grb-good.grb-active { opacity: 1 !important; }
+.grb-meh.grb-active  { opacity: 1 !important; }
+.grb-bad.grb-active  { opacity: 1 !important; }
+.group-rated-good { border-left: 3px solid #4caf82; }
+.group-rated-meh  { border-left: 3px solid #e8954a; }
+.group-rated-bad  { border-left: 3px solid #e05555; opacity: 0.6; }
+
 .group-delete-btn {
   background: transparent; color: var(--text-dim); border: 1px solid var(--border);
   font-size: 15px; line-height: 1; padding: 2px 7px; flex-shrink: 0;
@@ -206,6 +225,11 @@ button.accent-outline:disabled { color: var(--text-dim); border-color: var(--bor
   display: flex; align-items: center; gap: 8px;
   padding: 9px 16px; flex-wrap: wrap;
 }
+.cand-drag-handle {
+  cursor: grab; opacity: 0.3; font-size: 14px; padding: 0 4px; flex-shrink: 0;
+}
+.candidate-row:hover .cand-drag-handle { opacity: 0.7; }
+.cand-drag-handle:active { cursor: grabbing; }
 .cand-rank {
   font-size: 11px; font-weight: 700; color: var(--text-dim);
   font-family: var(--mono); min-width: 20px; flex-shrink: 0;
@@ -229,6 +253,39 @@ button.accent-outline:disabled { color: var(--text-dim); border-color: var(--bor
   font-size: 11px; font-weight: 600;
 }
 .cand-restore-btn:hover { background: var(--yellow-dim); opacity: 1; }
+.cand-dup-btn {
+  background: transparent; color: var(--text-mid); border: 1px solid var(--border2);
+  font-size: 13px;
+}
+.cand-dup-btn:hover { color: var(--accent); border-color: var(--accent); opacity: 1; }
+
+/* Manual trim controls */
+.trim-group {
+  display: flex; align-items: center; gap: 2px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  padding: 0 3px;
+}
+.trim-btn {
+  background: transparent !important;
+  color: var(--text-mid) !important;
+  border: none !important;
+  font-size: 13px !important;
+  padding: 2px 5px !important;
+  line-height: 1;
+  cursor: pointer;
+}
+.trim-btn:hover { color: var(--text) !important; opacity: 1 !important; }
+.trim-btn-cut { color: #e07070 !important; }
+.trim-btn-cut:hover { color: #ff9090 !important; }
+.trim-val {
+  font-size: 10px;
+  color: #e07070;
+  min-width: 24px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
 
 /* Word display inside each candidate */
 .cand-words {
@@ -325,6 +382,14 @@ button.accent-outline:disabled { color: var(--text-dim); border-color: var(--bor
   cursor: pointer; font-weight: 600; font-family: var(--font);
 }
 .asm-restore-btn:hover { background: var(--yellow-dim); opacity: 1; }
+
+/* ── Composite assembly items ── */
+.asm-composite { border-left: 2px solid var(--accent); }
+.asm-composite-sep {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--accent); opacity: 0.7;
+  margin: 0 3px; vertical-align: middle; cursor: help;
+}
 
 /* ── Selection toolbar ── */
 #selection-toolbar {
