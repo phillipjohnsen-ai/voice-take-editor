@@ -337,7 +337,23 @@ button.accent-outline:disabled { color: var(--text-dim); border-color: var(--bor
   border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
   transition: border-color 0.12s;
 }
-.asm-item.drag-over { border-color: var(--accent); }
+.asm-item.drag-over  { border-color: var(--accent); }
+.asm-item.asm-playing { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(108,99,255,0.18); }
+
+.asm-gap-row {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 4px 0;
+}
+.asm-gap-btn {
+  font-size: 16px; line-height: 1; padding: 1px 9px;
+  background: var(--surface2); color: var(--text-mid);
+  border: 1px solid var(--border); border-radius: 6px;
+}
+.asm-gap-btn:hover { color: var(--text); border-color: var(--border2); opacity: 1; }
+.asm-gap-val { font-size: 11px; color: var(--text-dim); font-family: var(--mono); min-width: 52px; text-align: center; }
+.asm-gap-val.asm-gap-modified { color: var(--accent); }
+.asm-gap-reset { font-size: 13px; padding: 1px 6px; background: transparent; color: var(--text-dim); border: 1px solid var(--border); border-radius: 6px; }
+.asm-gap-reset:hover { color: var(--accent); border-color: var(--accent); opacity: 1; }
 
 .asm-item-header {
   display: flex; align-items: center; gap: 8px;

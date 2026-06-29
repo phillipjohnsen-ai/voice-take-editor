@@ -519,7 +519,12 @@ def export_audio(session_id: str, body: dict):
         # of how much natural decay the recording has after the last word.
         clip_seg = _trim_trailing_silence(clip_seg, keep_ms=30)
 
-        gap_before = 0 if (assembled is None or clip.get("no_gap_before")) else GAP_MS
+        if assembled is None or clip.get("no_gap_before"):
+            gap_before = 0
+        elif clip.get("gap_before_ms") is not None:
+            gap_before = max(0, int(clip["gap_before_ms"]))
+        else:
+            gap_before = GAP_MS
 
         # SRT: open new entry when subtitle_text is provided (first clip of each sentence)
         subtitle_text = clip.get("subtitle_text")
@@ -532,10 +537,10 @@ def export_audio(session_id: str, body: dict):
 
         if assembled is None:
             assembled = clip_seg
-        elif clip.get("no_gap_before"):
+        elif gap_before == 0:
             assembled = assembled + clip_seg
         else:
-            assembled = assembled + AudioSegment.silent(duration=GAP_MS) + clip_seg
+            assembled = assembled + AudioSegment.silent(duration=gap_before) + clip_seg
 
     if assembled is None:
         raise HTTPException(400, "No audio produced")

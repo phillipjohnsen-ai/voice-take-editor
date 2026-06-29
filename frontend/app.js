@@ -41,6 +41,11 @@ let assembly = [];
 let asmDragSrcIdx = null;
 let groupDragSrcIdx = null;
 
+const asmGaps = {};           // { [positionIndex]: extraGapMs } gap before item at that index
+const ASM_GAP_BASE_MS  = 80;
+const ASM_GAP_STEP_MS  = 100;
+let asmPlayIdx = null;        // index of item currently playing during Play All
+
 // Audio
 const miniAudios = {};
 let rangePlayer = null;
@@ -154,6 +159,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-regroup').addEventListener('click', runGroupRank);
   document.getElementById('btn-clear-assembly').addEventListener('click', clearAssembly);
   document.getElementById('btn-export').addEventListener('click', exportAssembly);
+  document.getElementById('btn-play-all').addEventListener('click', playAsmAll);
 
   // Toolbar
   document.getElementById('btn-sel-play').addEventListener('click', playWordSel);
@@ -1140,13 +1146,17 @@ function getAsmItemRanges(item) {
 }
 
 function renderAssembly() {
-  const list   = document.getElementById('assembly-list');
-  const btnExp = document.getElementById('btn-export');
+  const list       = document.getElementById('assembly-list');
+  const btnExp     = document.getElementById('btn-export');
+  const btnPlayAll = document.getElementById('btn-play-all');
   if (!assembly.length) {
     list.innerHTML = '<div class="assembly-empty">No sentences added yet — pick candidates above.</div>';
-    btnExp.disabled = true; return;
+    btnExp.disabled = true;
+    btnPlayAll.disabled = true;
+    return;
   }
   btnExp.disabled = false;
+  btnPlayAll.disabled = false;
   list.innerHTML = assembly.map((item, i) => renderAsmItem(item, i)).join('');
 }
 
@@ -1183,13 +1193,30 @@ function renderAsmItem(item, i) {
   const words = getAsmWords(item).filter(w => !isAsmWordDeleted(item, w));
   const ranges = getAsmItemRanges(item);
   const dur    = ranges.reduce((s, r) => s + (r.end - r.start), 0);
+  const gapMs  = ASM_GAP_BASE_MS + (asmGaps[i] || 0);
 
   const wordsHtml = words.length
     ? words.map(w => `<span class="asm-word">${escHtml(w.word)}</span>`).join(' ')
     : `<span class="asm-word-plain">${escHtml(item.text)}</span>`;
 
-  return `<div class="asm-item" id="ai-${item.id}">
+  const gapHtml = i > 0 ? `
+    <div class="asm-gap-row">
+      <button class="asm-gap-btn" onclick="adjustAsmGap(${i},-1)">−</button>
+      <span class="asm-gap-val${(asmGaps[i] || 0) !== 0 ? ' asm-gap-modified' : ''}">${gapMs}ms</span>
+      <button class="asm-gap-btn" onclick="adjustAsmGap(${i},+1)">+</button>
+      ${(asmGaps[i] || 0) !== 0 ? `<button class="asm-gap-reset" onclick="resetAsmGap(${i})" title="Reset to default">↺</button>` : ''}
+    </div>` : '';
+
+  const playing = asmPlayIdx !== null && assembly[asmPlayIdx]?.id === item.id;
+
+  return `${gapHtml}<div class="asm-item${playing ? ' asm-playing' : ''}" id="ai-${item.id}"
+    draggable="true"
+    ondragstart="asmDragStart(event,${i})"
+    ondragover="asmDragOver(event)"
+    ondragleave="asmDragLeave(event)"
+    ondrop="asmDrop(event,${i})">
     <div class="asm-item-header">
+      <span class="asm-drag-handle" title="Drag to reorder">⠿</span>
       <span class="asm-num">${i + 1}</span>
       <span class="asm-source" title="${escHtml(item.sourceName)}">${escHtml(item.sourceName)}</span>
       <span class="asm-time">${fmt(item.start)}–${fmt(item.end)} · ${fmtDur(dur)}</span>
@@ -1240,6 +1267,58 @@ function clearAssembly() {
   groupResult?.groups?.forEach(g => redrawGroupCard(g.group_id));
 }
 
+function adjustAsmGap(idx, direction) {
+  asmGaps[idx] = Math.max(-(ASM_GAP_BASE_MS - 10), (asmGaps[idx] || 0) + direction * ASM_GAP_STEP_MS);
+  renderAssembly();
+}
+
+function resetAsmGap(idx) {
+  delete asmGaps[idx];
+  renderAssembly();
+}
+
+function playAsmAll() {
+  if (!assembly.length) return;
+  if (rangePlayer) { rangePlayer.cancel(); rangePlayer = null; }
+  asmPlayIdx = 0;
+  renderAssembly();
+  const playNext = () => {
+    if (asmPlayIdx === null || asmPlayIdx >= assembly.length) {
+      asmPlayIdx = null;
+      renderAssembly();
+      return;
+    }
+    const item = assembly[asmPlayIdx];
+    const label = `${item.sourceName} · ${asmPlayIdx + 1}/${assembly.length}`;
+    // Gap before this item (first item has no gap)
+    const gapMs = asmPlayIdx > 0 ? ASM_GAP_BASE_MS + (asmGaps[asmPlayIdx] || 0) : 0;
+    const afterGap = (cb) => gapMs > 0 ? setTimeout(cb, gapMs) : cb();
+    afterGap(() => {
+    if (item.composite) {
+      let pi = 0;
+      const playPart = () => {
+        if (pi >= item.parts.length) { asmPlayIdx++; renderAssembly(); playNext(); return; }
+        const part = item.parts[pi++];
+        playSegmentRanges(part.fileId, part.ranges, label, playPart);
+      };
+      playPart();
+    } else {
+      const hasDels = (item.sgDels || []).length > 0;
+      const ranges = hasDels
+        ? buildVisibleRanges(getAsmWords(item), w => isAsmWordDeleted(item, w))
+        : getAsmItemRanges(item);
+      if (!ranges.length) { asmPlayIdx++; playNext(); return; }
+      playSegmentRanges(item.fileId, ranges, label, () => {
+        asmPlayIdx++;
+        renderAssembly();
+        playNext();
+      });
+    }
+    }); // afterGap
+  };
+  playNext();
+}
+
 function asmDragStart(e, i) { asmDragSrcIdx = i; e.dataTransfer.effectAllowed = 'move'; }
 function asmDragOver(e)  { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
 function asmDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
@@ -1260,18 +1339,23 @@ async function exportAssembly() {
     const item = assembly[i];
     const prev = assembly[i - 1];
     // Same group = parts of the same sentence → join seamlessly (no sentence gap).
-    const no_gap_before = prev != null && prev.groupId === item.groupId;
+    const sameGroup = prev != null && prev.groupId === item.groupId;
+    const extraGap  = asmGaps[i] || 0;
+    // Same-group items join seamlessly by default; user gap adjustment overrides that.
+    const no_gap_before = i === 0 || (sameGroup && extraGap === 0);
+    const gap_before_ms = no_gap_before ? 0 : (ASM_GAP_BASE_MS + extraGap);
     if (item.composite) {
       const compositeText = item.parts.map(p => p.text || '').join(' ').trim();
       item.parts.forEach((p, pi) => {
         clips.push({
           file_id: p.fileId, ranges: p.ranges,
           no_gap_before: pi > 0 || no_gap_before,
+          gap_before_ms: pi > 0 ? 0 : gap_before_ms,
           subtitle_text: pi === 0 ? compositeText : null,
         });
       });
     } else {
-      clips.push({ file_id: item.fileId, ranges: getAsmItemRanges(item), no_gap_before, subtitle_text: item.text || '' });
+      clips.push({ file_id: item.fileId, ranges: getAsmItemRanges(item), no_gap_before, gap_before_ms, subtitle_text: item.text || '' });
     }
   }
   try {
