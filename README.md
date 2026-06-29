@@ -15,9 +15,10 @@ This tool makes it fast:
 1. **Upload your takes** — drop in as many audio files as you like
 2. **Transcribe with Whisper** — a free AI transcribes everything locally on your computer (your audio never leaves your machine)
 3. **Group & Rank** — the tool finds every sentence spoken across all your takes, groups matching sentences together, and scores each version based on quality (fewer stumbles, fewer filler words, less silence)
-4. **Listen and pick** — for each sentence, you see 2–3 ranked candidates with a Play button next to each. You listen and choose the one that sounds best
+4. **Listen and pick** — for each sentence, you see ranked candidates with a Play button. You listen and choose the one that sounds best
 5. **Edit words** — click a word to select it, shift-click another word to select a range, and press Backspace to delete it. The audio skips deleted words on export
-6. **Export** — one click exports your final assembly as a clean WAV file
+6. **Adjust timing** — reorder lines by dragging, and control the silence gap between each line with − / + buttons
+7. **Export** — one click exports a ZIP file containing a clean WAV and a matching SRT subtitle file
 
 Everything runs on your own computer. Nothing is sent anywhere. It's completely free.
 
@@ -262,23 +263,19 @@ Drag and drop your audio files onto the upload area, or click to browse. You can
 
 <!-- screenshot: drop zone with files being dragged in -->
 
-### 2. Transcribe your recordings
+### 2. Process your recordings
 
-Click **Transcribe All with Whisper**.
+Click **▶ Process & Group Everything**.
 
-The first time you do this, Whisper will download its AI model — about 145 MB. This happens automatically and only happens once. After that, transcription is fully offline.
+This does two things in one step: transcribes all your files with Whisper, then groups and ranks every sentence.
 
-Transcription takes roughly 1–3 minutes per 10 minutes of audio, depending on your computer's speed. You'll see a "Transcribing…" status on each file while it works.
+The first time you run this, Whisper will download its AI model — about 145 MB. This happens automatically and only happens once. After that, transcription is fully offline.
 
-<!-- screenshot: takes panel with transcription in progress -->
+Processing takes roughly 1–3 minutes per 10 minutes of audio. You'll see progress status on each file while it works.
 
-### 3. Optional — Remove silence
+### 3. Group and rank sentences
 
-If your recordings have long pauses at the start or between sentences, click **Remove Silence from All**. This cleans up the audio before assembly. It's optional but recommended.
-
-### 4. Group and rank sentences
-
-Once all files are transcribed, click **✦ Group & Rank Sentences**.
+Once processing finishes, click **✦ Group & Rank** if you want to re-run grouping after making changes.
 
 The tool will:
 - Find every sentence across all your takes
@@ -319,11 +316,26 @@ Grab the **⠿ handle** on the left side of any sentence and drag it up or down 
 
 You can also reorder the sentence groups themselves the same way — drag the ⠿ handle on a group header to move the whole group up or down.
 
-### 8. Export
+### 8. Preview and adjust spacing
 
-When you're happy with your assembly, click **⬇ Export WAV**.
+Click **▶ Play All** in the assembly header to hear all lines play back in sequence with the correct gaps between them.
 
-A `.wav` file will download to your computer. The exported audio reflects exactly what you see in the assembly — deleted words are cut out, and sentences play in the order you arranged them.
+Between each pair of lines you'll see a gap control:
+- **−** reduces the silence between those two lines (100ms steps)
+- **+** increases it
+- **↺** resets to the default (80ms)
+
+The gap is tied to the position between lines, so it stays put when you reorder.
+
+### 9. Export
+
+When you're happy with your assembly, click **⬇ Export ZIP**.
+
+A `.zip` file will download containing:
+- A `.wav` file — the final mixed audio with all your edits applied
+- A `.srt` file — subtitle timestamps matching the assembly, ready for video editors
+
+The exported audio reflects exactly what you see in the assembly — deleted words are cut out, gaps are the sizes you set, and sentences play in the order you arranged them.
 
 ---
 
@@ -331,7 +343,7 @@ A `.wav` file will download to your computer. The exported audio reflects exactl
 
 Press `Ctrl + C` in your terminal or Command Prompt window.
 
-Your session is saved automatically. The next time you start the tool, your previous files and assembly will still be there.
+Your session ID is saved in the browser so the server reconnects automatically next time. Note: your assembly and word edits live in the browser's memory — if you hard-refresh the page you will need to re-process your files.
 
 ---
 
@@ -423,7 +435,7 @@ voice-take-editor/
 Folders created automatically (not included in the repository):
 - `bins/` — ffmpeg binary (downloaded by setup on Mac)
 - `uploads/` — your audio files
-- `exports/` — exported WAV files
+- `exports/` — exported ZIP files (WAV + SRT)
 
 ---
 
