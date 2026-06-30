@@ -6,6 +6,59 @@ Works on **Mac**, **Windows**, and **Linux**.
 
 ---
 
+## Installation
+
+There are two ways to install — pick the one that matches you:
+
+| | Who it's for | What you need to do |
+|---|---|---|
+| **[Quick Install](#quick-install)** | Non-technical users | Open Terminal once, paste one line — done |
+| **[Developer Setup](#developer-setup)** | Technical users | Clone the repo and run the setup scripts manually |
+
+---
+
+## Quick Install
+
+One command installs everything and creates a **double-click launcher on your Desktop**. After that, you never need to open Terminal again.
+
+### Mac or Linux
+
+Open **Terminal** and paste this:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/phillipjohnsen-ai/voice-take-editor/main/install.sh | bash
+```
+
+> **Mac:** press `Cmd + Space`, type "Terminal", press Enter.
+> **Linux:** press `Ctrl + Alt + T` or find Terminal in your app menu.
+
+The script will install any missing tools (Python, Git), download the app, and create a **"Voice Take Editor"** icon on your Desktop. Takes 3–5 minutes.
+
+### Windows
+
+Open **Command Prompt** (press `Win + R`, type `cmd`, press Enter) and paste this:
+
+```
+curl -fsSL https://raw.githubusercontent.com/phillipjohnsen-ai/voice-take-editor/main/install.bat -o "%TEMP%\vte_install.bat" && "%TEMP%\vte_install.bat"
+```
+
+The script will install any missing tools (Python, Git) via winget, download the app, and create a **"Voice Take Editor"** shortcut on your Desktop. Takes 3–5 minutes.
+
+---
+
+### After installation (all platforms)
+
+**Double-click "Voice Take Editor" on your Desktop.**
+
+- The server starts in the background (no Terminal window)
+- Your browser opens automatically to the app
+- **First launch only:** the Whisper AI model downloads (~145 MB, takes a minute)
+- Every launch after that is instant
+
+> **To update** the app later, just run the same install command again — it will pull the latest version without reinstalling everything.
+
+---
+
 ## What does it do?
 
 When you're recording a voiceover, podcast, or narration, you usually record several takes of the same sentences. Picking the best parts from each take and stitching them together is normally slow and tedious work in a full audio editor.
@@ -26,27 +79,26 @@ Everything runs on your own computer. Nothing is sent anywhere. It's completely 
 
 ---
 
-## What you need before you start
+## What you need
 
 - **Mac**, **Windows 10/11**, or **Linux**
-- **Python 3.9 or newer** — most Macs and Linux machines already have this; Windows users will install it in the steps below
 - Your **audio files** — `.m4a`, `.mp3`, `.wav`, or `.aiff` all work. iPhone voice memos export as `.m4a` and work perfectly
 
-That's it. No audio software, no paid services, no accounts required.
+No audio software, no paid services, no accounts required. Python and other tools are installed automatically.
 
 ---
 
-## Installation
+## Developer Setup
 
-Pick your operating system:
+For technical users who want to clone the repo and run things manually.
 
-- [Mac](#installation-mac)
-- [Windows](#installation-windows)
-- [Linux](#installation-linux)
+- [Mac](#developer-setup--mac)
+- [Windows](#developer-setup--windows)
+- [Linux](#developer-setup--linux)
 
 ---
 
-## Installation — Mac
+## Developer Setup — Mac
 
 ### Step 1 — Install Homebrew
 
@@ -127,7 +179,7 @@ Leave Terminal open while you use the tool. To stop it, press `Ctrl + C`.
 
 ---
 
-## Installation — Windows
+## Developer Setup — Windows
 
 ### Step 1 — Install Python
 
@@ -192,7 +244,7 @@ Leave Command Prompt open while you use the tool. To stop it, press `Ctrl + C`.
 
 ---
 
-## Installation — Linux
+## Developer Setup — Linux
 
 These instructions work on Ubuntu, Debian, Fedora, Arch, and most other distributions.
 
@@ -426,10 +478,12 @@ voice-take-editor/
 │   ├── index.html       # The UI
 │   ├── app.js           # All the browser logic
 │   └── style.css        # Styling
-├── setup.sh             # One-time setup for Mac / Linux
-├── setup.bat            # One-time setup for Windows
-├── start.sh             # Launch the tool on Mac / Linux
-└── start.bat            # Launch the tool on Windows
+├── install.sh           # Quick installer for Mac + Linux (one-liner)
+├── install.bat          # Quick installer for Windows (one-liner)
+├── setup.sh             # Developer setup for Mac / Linux
+├── setup.bat            # Developer setup for Windows
+├── start.sh             # Launch the tool on Mac / Linux (developer)
+└── start.bat            # Launch the tool on Windows (developer)
 ```
 
 Folders created automatically (not included in the repository):
